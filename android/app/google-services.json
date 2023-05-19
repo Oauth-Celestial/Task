@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1097611318464",
+    "project_id": "taskmanager-bdb53",
+    "storage_bucket": "taskmanager-bdb53.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097611318464:android:810f0f2cc4e85c80f54925",
+        "android_client_info": {
+          "package_name": "com.elred.taskmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097611318464-65el2h4gijce35252167qr0tthknl3ee.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elred.taskmanager",
+            "certificate_hash": "68b1a670d61b2c90197faab395409e4d815a3757"
+          }
+        },
+        {
+          "client_id": "1097611318464-it7hf9102o40n5jfb724mflbfj5ukbni.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAoNQ0GpOu4wJkOFkN7hpMSFKDJ-J_3OM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097611318464-it7hf9102o40n5jfb724mflbfj5ukbni.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
