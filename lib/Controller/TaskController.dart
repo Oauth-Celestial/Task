@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:taskmanagment/Model/TaskModel.dart';
 import 'package:taskmanagment/Services/FirebaseServices/TaskService.dart';
+import 'package:taskmanagment/main.dart';
 
 import '../Constants/AppColors.dart';
 
-class TaskController with ChangeNotifier {
+class TaskController extends DisposableProvider {
   DateTime? selectedDate;
   Future<bool> createTask(
       {required String title,
@@ -72,5 +73,10 @@ class TaskController with ChangeNotifier {
         controller.text = DateFormat.yMMMMd().format(date);
       }
     });
+  }
+
+  @override
+  void disposeValues() {
+    // TODO: implement disposeValues
   }
 }

@@ -89,11 +89,11 @@ class TaskService {
       sections.add(SectionModel(title: "Completed", sectionTask: completed));
     }
     double percentage = 0;
-    if (inProgress.length > 0 && completed.length > 0) {
+    if (taskDocuments.length > 0) {
       percentage = completed.length / taskDocuments.length;
     }
 
-    return HomeDataModel(
-        inProgress.length, completed.length, percentage * 100, sections);
+    return HomeDataModel(inProgress.length, completed.length, percentage * 100,
+        sections, taskDocuments.length);
   }
 }

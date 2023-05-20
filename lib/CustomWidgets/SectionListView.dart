@@ -1,9 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanagment/Constants/AppColors.dart';
+import 'package:taskmanagment/Constants/HelperWidget.dart';
 import 'package:taskmanagment/Model/SectionModel.dart';
-import 'package:taskmanagment/Screen/ListTile/TaskTile.dart';
-import 'package:taskmanagment/Screen/ManipulateTask.dart';
+import 'package:taskmanagment/Screen/HomeScreen/ListTile/TaskTile.dart';
+import 'package:taskmanagment/Screen/TaskScreen/ManipulateTask.dart';
 
 class SectionListView extends StatelessWidget {
   final List<SectionModel> sections;
@@ -20,10 +21,33 @@ class SectionListView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-              child: Text(
-                section.title,
-                style: TextStyle(color: AppColors.textColor, fontSize: 16),
+              padding: EdgeInsets.only(top: 10, left: 20, bottom: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    section.title,
+                    style: TextStyle(
+                        color: AppColors.textColor,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  HelperWidget.addHorizontalSpace(of: 10),
+                  if (section.title.toLowerCase() == "completed") ...[
+                    Container(
+                      alignment: Alignment.center,
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                          color: AppColors.textColor,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Text(
+                        "${section.sectionTask?.length}",
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ]
+                ],
               ),
             ),
             Container(
@@ -37,7 +61,7 @@ class SectionListView extends StatelessWidget {
                         left: 10, right: 10, top: 5, bottom: 5),
                     child: OpenContainer(
                       transitionType: ContainerTransitionType.fade,
-                      transitionDuration: Duration(milliseconds: 800),
+                      transitionDuration: Duration(milliseconds: 600),
                       openBuilder: (context, _) => ManipulateTask(
                         taskData: section.sectionTask![index],
                       ),

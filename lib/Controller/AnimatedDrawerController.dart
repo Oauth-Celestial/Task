@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taskmanagment/main.dart';
 
-class AnimatedDrawerController with ChangeNotifier {
+class AnimatedDrawerController extends DisposableProvider {
   bool isDrawerOpen = false;
   AnimationController? animationController;
 
@@ -19,5 +20,12 @@ class AnimatedDrawerController with ChangeNotifier {
     isDrawerOpen = false;
     animationController?.reverse();
     notifyListeners();
+  }
+
+  @override
+  void disposeValues() {
+    bool isDrawerOpen = false;
+    AnimationController? animationController;
+    // TODO: implement disposeValues
   }
 }

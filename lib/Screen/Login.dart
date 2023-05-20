@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:taskmanagment/Constants/AppColors.dart';
 import 'package:taskmanagment/Constants/AssetPath.dart';
-import 'package:taskmanagment/Services/AuthService.dart';
+import 'package:taskmanagment/Services/FirebaseServices/AuthService.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -48,7 +48,7 @@ class LoginScreen extends StatelessWidget {
                       SizedBox(
                         width: 5,
                       ),
-                      Text("Task It",
+                      Text("Tasks",
                           style: TextStyle(
                               color: AppColors.headingColor,
                               fontSize: 25,

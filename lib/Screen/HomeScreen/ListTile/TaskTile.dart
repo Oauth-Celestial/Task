@@ -22,7 +22,13 @@ class TaskTile extends StatelessWidget {
                   alignment: Alignment.center,
                   width: 60,
                   height: 60,
-                  child: Text("${index}"),
+                  child: (task.hasCompleted ?? false)
+                      ? Icon(
+                          Icons.task_alt,
+                          color: AppColors.purpleBackground,
+                          size: 40,
+                        )
+                      : Text("${index}"),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 0.5),
                       borderRadius: BorderRadius.circular(30)),

@@ -3,18 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:provider/provider.dart';
 import 'package:taskmanagment/Constants/AppColors.dart';
+import 'package:taskmanagment/Constants/AssetPath.dart';
 
 import 'package:taskmanagment/Controller/AnimatedDrawerController.dart';
+import 'package:taskmanagment/Controller/HomeScreenController.dart';
 import 'package:taskmanagment/CustomWidgets/SectionListView.dart';
 import 'package:taskmanagment/Model/HomeDataModel.dart';
-import 'package:taskmanagment/Model/SectionModel.dart';
 
-import 'package:taskmanagment/Screen/AddTask.dart';
+import 'package:taskmanagment/Screen/TaskScreen/AddTask.dart';
 
-import 'package:taskmanagment/Screen/TopSection.dart';
+import 'package:taskmanagment/Screen/HomeScreen/TopSection.dart';
 import 'package:taskmanagment/Services/FirebaseServices/TaskService.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   static FirebaseAuth auth = FirebaseAuth.instance;
 
-// FloatingActionButton(
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -46,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: OpenContainer(
           transitionType: ContainerTransitionType.fade,
-          transitionDuration: Duration(milliseconds: 800),
+          transitionDuration: Duration(milliseconds: 600),
           openBuilder: (context, _) => AddTask(),
           closedElevation: 0,
           closedShape: RoundedRectangleBorder(
@@ -89,19 +90,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         Expanded(
                           child: Container(
-                            color: Colors.white,
-                            child: SectionListView(
-                              sections: taskData.sectionData,
-                            ),
-                          ),
+                              color: Colors.white,
+                              child: taskData.totalTask > 0
+                                  ? SectionListView(
+                                      sections: taskData.sectionData,
+                                    )
+                                  : notask()),
                         )
                       ],
                     );
                   } else {
                     return Container(
+                      color: Colors.transparent,
                       child: Center(
                         child: CircularProgressIndicator(
-                          color: AppColors.purpleBackground,
+                          color: AppColors.buttonColor,
                         ),
                       ),
                     );
@@ -110,4 +113,26 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+Widget notask() {
+  return Container(
+    width: double.infinity,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        LottieBuilder.asset(
+          addtask,
+          repeat: false,
+        ),
+        Text(
+          "No Task Add Some",
+          style: TextStyle(
+              color: AppColors.purpleBackground,
+              fontWeight: FontWeight.bold,
+              fontSize: 16),
+        )
+      ],
+    ),
+  );
 }

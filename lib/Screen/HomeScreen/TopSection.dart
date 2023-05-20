@@ -6,7 +6,7 @@ import 'package:taskmanagment/Constants/AppColors.dart';
 import 'package:taskmanagment/Constants/HelperWidget.dart';
 import 'package:taskmanagment/Model/HomeDataModel.dart';
 
-import '../Controller/AnimatedDrawerController.dart';
+import '../../Controller/AnimatedDrawerController.dart';
 
 class TopSection extends StatelessWidget {
   const TopSection({
@@ -43,9 +43,13 @@ class TopSection extends StatelessWidget {
                                   listen: false)
                               .openDrawer();
                         },
-                        child: Icon(
-                          Icons.menu,
-                          color: Colors.white,
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          child: Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       SizedBox(

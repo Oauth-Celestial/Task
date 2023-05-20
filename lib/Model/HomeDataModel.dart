@@ -5,7 +5,8 @@ class HomeDataModel {
   final int completedTask;
   final double percentage;
   final List<SectionModel> sectionData;
+  final int totalTask;
 
   HomeDataModel(this.inProgressTask, this.completedTask, this.percentage,
-      this.sectionData);
+      this.sectionData, this.totalTask);
 }
