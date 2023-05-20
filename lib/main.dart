@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:taskmanagment/CustomWidgets/AnimatedDrawer/AnimatedDrawer.dart';
 import 'package:taskmanagment/CustomWidgets/AnimatedDrawer/Drawer.dart';
@@ -17,6 +18,8 @@ abstract class DisposableProvider with ChangeNotifier {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp();
 
   runApp(MyApp());
