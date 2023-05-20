@@ -8,6 +8,7 @@ class UserService {
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   static UserService shared = UserService();
 
+  /// Checks if user document is present or not
   checkDocument() async {
     DocumentSnapshot isUser =
         await firestore.collection("Users").doc(auth.currentUser!.uid).get();
@@ -18,6 +19,7 @@ class UserService {
     }
   }
 
+  /// Gets  user from firestore
   getUserFromFirestore() async {
     DocumentSnapshot userData =
         await firestore.collection("Users").doc(auth.currentUser!.uid).get();
@@ -25,6 +27,9 @@ class UserService {
     return user;
   }
 
+  /// get user from  google credentials
+  ///
+  /// parameters userDate: GoogleSignInAccount
   Future<AppUser> getUser(GoogleSignInAccount? userData) async {
     bool isUserRegistered = await checkDocument();
 

@@ -3,6 +3,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:taskmanagment/Constants/HelperWidget.dart';
 
 class NetworkCheck {
+  // Used for getting global app context
   static final GlobalKey<NavigatorState> contextKey =
       GlobalKey<NavigatorState>();
   static NetworkCheck shared = NetworkCheck();
@@ -11,6 +12,7 @@ class NetworkCheck {
   OverlayState? overlayState;
   Widget? noInternetWidget;
 
+// Sets the custon no internet widget from the  user
   setup({Widget? widgetForNoInternet}) async {
     noInternetWidget = widgetForNoInternet;
 
@@ -31,6 +33,8 @@ class NetworkCheck {
     });
   }
 
+  /// Checks if client has active internet connection
+
   isConnectedtoNetwork() async {
     bool isconnected = await InternetConnectionChecker().hasConnection;
     if (isconnected) {
@@ -40,11 +44,14 @@ class NetworkCheck {
     }
   }
 
+// removes all overlay entry from widget tree
+
   removeNoInternet() {
     entries.forEach((entry) => entry.remove());
     entries.clear();
   }
 
+// draws the custom internet widget with its own context
   showNoInternet() {
     BuildContext? insertcontext;
     entry = OverlayEntry(builder: (context) {

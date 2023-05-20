@@ -10,6 +10,7 @@ class TaskService {
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   static TaskService shared = TaskService();
 
+  /// Creates task on firbase
   Future<bool> createTask(TaskModel task) async {
     try {
       await firestore
@@ -24,6 +25,7 @@ class TaskService {
     }
   }
 
+// Delete task from firebase
   Future<bool> deleteTask(String id) async {
     try {
       await firestore
@@ -38,6 +40,7 @@ class TaskService {
     }
   }
 
+  /// Update Task on firesbase
   Future<bool> updateTask(TaskModel task, String taskId) async {
     try {
       await firestore
@@ -52,6 +55,7 @@ class TaskService {
     }
   }
 
+  /// Update task status on firebase
   Future<bool> updateTaskStatus(String taskid, bool taskStatus) async {
     try {
       await firestore
@@ -59,13 +63,17 @@ class TaskService {
           .doc(auth.currentUser!.uid)
           .collection("Task")
           .doc(taskid)
-          .update({"hasCompleted": taskStatus});
+          .update({
+        "hasCompleted": taskStatus,
+        "completedOn": taskStatus ? Timestamp.now() : null
+      });
       return true;
     } catch (e) {
       return false;
     }
   }
 
+  /// Converts user task documents to section data used by section list
   HomeDataModel convertToHomeData(QuerySnapshot? taskData) {
     List<SectionModel> sections = [];
     List<TaskModel> completed = [];
@@ -89,6 +97,7 @@ class TaskService {
       sections.add(SectionModel(title: "Completed", sectionTask: completed));
     }
     double percentage = 0;
+    // Calculate task
     if (taskDocuments.length > 0) {
       percentage = completed.length / taskDocuments.length;
     }

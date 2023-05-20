@@ -5,17 +5,14 @@ class AnimatedDrawerController extends DisposableProvider {
   bool isDrawerOpen = false;
   AnimationController? animationController;
 
-  // changeDrawerState() {
-  //   isDrawerOpen = !isDrawerOpen;
-  //   notifyListeners();
-  // }
-
+  // Opens the drawer
   openDrawer() {
     isDrawerOpen = true;
     animationController?.forward();
     notifyListeners();
   }
 
+// close the drawer
   closeDrawer() {
     isDrawerOpen = false;
     animationController?.reverse();

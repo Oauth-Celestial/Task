@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:taskmanagment/Helpers/DateHelper.dart';
 import 'package:taskmanagment/Model/TaskModel.dart';
 import 'package:taskmanagment/Services/FirebaseServices/TaskService.dart';
 import 'package:taskmanagment/main.dart';
@@ -13,13 +14,13 @@ class TaskController extends DisposableProvider {
       {required String title,
       required String description,
       required String date}) async {
-    DateFormat format = DateFormat.yMMMMd('en_US');
-    DateTime enteredDate = format.parse(date);
+    DateTime enteredDate = DateHelper.shared.stringToDate(date);
     TaskModel task = TaskModel(
         title: title,
         description: description,
         createdOn: Timestamp.now(),
         endsOn: Timestamp.fromDate(enteredDate ?? DateTime.now()),
+        completedOn: null,
         hasCompleted: false);
 
     bool hasAddedTask = await TaskService.shared.createTask(task);
@@ -70,7 +71,7 @@ class TaskController extends DisposableProvider {
       //TODO: handle selected date
       if (date != null) {
         selectedDate = date;
-        controller.text = DateFormat.yMMMMd().format(date);
+        controller.text = DateHelper.shared.datetoString(date);
       }
     });
   }

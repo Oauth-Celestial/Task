@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taskmanagment/Constants/AppColors.dart';
 import 'package:taskmanagment/Constants/HelperWidget.dart';
+import 'package:taskmanagment/Helpers/DateHelper.dart';
 import 'package:taskmanagment/Model/TaskModel.dart';
 
 class TaskTile extends StatelessWidget {
@@ -46,31 +47,39 @@ class TaskTile extends StatelessWidget {
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w500,
-                              fontSize: 15),
+                              fontSize: 15,
+                              decoration: (task.hasCompleted ?? false)
+                                  ? TextDecoration.lineThrough
+                                  : null),
                         ),
-                        HelperWidget.addVerticalSpace(of: 10),
+                        HelperWidget.addVerticalSpace(of: 5),
                         Container(
                           child: Text(
                             "${task.description ?? "-"}",
-                            maxLines: 2,
-                            style: TextStyle(color: AppColors.textColor),
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: AppColors.textColor,
+                                decoration: (task.hasCompleted ?? false)
+                                    ? TextDecoration.lineThrough
+                                    : null),
                           ),
-                        )
+                        ),
+                        HelperWidget.addVerticalSpace(of: 5),
+                        if (!(task.hasCompleted ?? false)) ...[
+                          Container(
+                            child: Text(
+                              "Task Ends on :- ${DateHelper.shared.stringFromTimeStamp(task.endsOn!)}",
+                              maxLines: 2,
+                              style:
+                                  TextStyle(color: AppColors.purpleBackground),
+                            ),
+                          )
+                        ]
                       ],
                     ),
                   ),
                 ),
                 HelperWidget.addHorizontalSpace(of: 8),
-                // Container(
-                //     height: 50,
-                //     alignment: Alignment.topCenter,
-                //     child: Container(
-                //       child: Text(
-                //         "9 am",
-                //         style: TextStyle(color: AppColors.textColor),
-                //       ),
-                //     )),
-                // HelperWidget.addHorizontalSpace(of: 8),
               ],
             ),
             Expanded(

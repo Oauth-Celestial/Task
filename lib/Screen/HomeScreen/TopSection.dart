@@ -32,7 +32,7 @@ class TopSection extends StatelessWidget {
               child: Container(
                 color: Colors.transparent,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 25, top: 30),
+                  padding: const EdgeInsets.only(left: 25, top: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -44,11 +44,15 @@ class TopSection extends StatelessWidget {
                               .openDrawer();
                         },
                         child: Container(
-                          width: 30,
-                          height: 30,
-                          child: Icon(
-                            Icons.menu,
-                            color: Colors.white,
+                          width: 50,
+                          height: 50,
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 8),
+                            child: Icon(
+                              Icons.menu,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

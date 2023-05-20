@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:taskmanagment/Constants/AppColors.dart';
 import 'package:taskmanagment/Constants/HelperWidget.dart';
 import 'package:taskmanagment/Controller/TaskController.dart';
+import 'package:taskmanagment/Helpers/DateHelper.dart';
 import 'package:taskmanagment/Model/TaskModel.dart';
 import 'package:taskmanagment/Services/FirebaseServices/TaskService.dart';
 
@@ -36,9 +37,9 @@ class _ManipulateTaskState extends State<ManipulateTask> {
     super.initState();
     titleController.text = widget.taskData.title ?? "";
     descriptionController.text = widget.taskData.title ?? "";
-    var date = new DateTime.fromMillisecondsSinceEpoch(
-        widget.taskData.endsOn!.millisecondsSinceEpoch);
-    dateController.text = DateFormat.yMMMMd().format(date);
+
+    dateController.text =
+        DateHelper.shared.stringFromTimeStamp(widget.taskData.endsOn!);
   }
 
   @override
@@ -129,14 +130,24 @@ class _ManipulateTaskState extends State<ManipulateTask> {
                       height: 30,
                     ),
                     Container(
-                      child: Icon(
-                        Icons.add_task,
-                        size: 50,
-                        color: AppColors.background,
-                      ),
+                      child: (widget.taskData.hasCompleted ?? false)
+                          ? Icon(
+                              Icons.task_alt,
+                              size: 50,
+                              color: AppColors.background,
+                            )
+                          : Icon(
+                              Icons.add_task,
+                              size: 50,
+                              color: AppColors.background,
+                            ),
                     ),
                     TextField(
-                      style: TextStyle(color: Colors.white, fontSize: 17),
+                      style: TextStyle(
+                          color: (widget.taskData.hasCompleted ?? false)
+                              ? AppColors.textColor
+                              : Colors.white,
+                          fontSize: 17),
                       controller: titleController,
                       readOnly: widget.taskData.hasCompleted ?? false,
                       focusNode: titleNode,
@@ -157,7 +168,11 @@ class _ManipulateTaskState extends State<ManipulateTask> {
                       height: 100,
                       child: TextField(
                         readOnly: widget.taskData.hasCompleted ?? false,
-                        style: TextStyle(color: Colors.white, fontSize: 17),
+                        style: TextStyle(
+                            color: (widget.taskData.hasCompleted ?? false)
+                                ? AppColors.textColor
+                                : Colors.white,
+                            fontSize: 17),
                         focusNode: descriptionNode,
                         controller: descriptionController,
                         maxLines: null, // Set this
@@ -179,7 +194,11 @@ class _ManipulateTaskState extends State<ManipulateTask> {
                     ),
                     TextField(
                       readOnly: widget.taskData.hasCompleted!,
-                      style: TextStyle(color: Colors.white, fontSize: 17),
+                      style: TextStyle(
+                          color: (widget.taskData.hasCompleted ?? false)
+                              ? AppColors.textColor
+                              : Colors.white,
+                          fontSize: 17),
                       focusNode: AlwaysDisabledFocusNode(),
                       controller: dateController,
                       onTap: widget.taskData.hasCompleted!
@@ -199,6 +218,21 @@ class _ManipulateTaskState extends State<ManipulateTask> {
                           labelText: 'Date',
                           labelStyle: TextStyle(color: Colors.grey)),
                     ),
+                    Visibility(
+                        visible: widget.taskData.hasCompleted!,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 50),
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              " Task Completed On : - ${DateHelper.shared.stringFromTimeStamp(widget.taskData.completedOn ?? Timestamp.now())}",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        )),
                     SizedBox(
                       height: 80,
                     ),

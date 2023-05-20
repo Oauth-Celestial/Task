@@ -7,6 +7,7 @@ class TaskModel {
   Timestamp? createdOn;
   Timestamp? endsOn;
   bool? hasCompleted;
+  Timestamp? completedOn;
 
   TaskModel(
       {required this.title,
@@ -14,7 +15,8 @@ class TaskModel {
       required this.description,
       required this.createdOn,
       required this.endsOn,
-      required this.hasCompleted});
+      required this.hasCompleted,
+      this.completedOn});
 
   factory TaskModel.fromJson(
       {required Map<String, dynamic> json, String? taskId}) {
@@ -24,7 +26,8 @@ class TaskModel {
         description: json["description"],
         createdOn: json["createdOn"],
         endsOn: json["endsOn"],
-        hasCompleted: json["hasCompleted"]);
+        hasCompleted: json["hasCompleted"],
+        completedOn: json["completedOn"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -33,7 +36,8 @@ class TaskModel {
       "description": this.description,
       "createdOn": this.createdOn,
       "endsOn": this.endsOn,
-      "hasCompleted": this.hasCompleted
+      "hasCompleted": this.hasCompleted,
+      "completedOn": this.completedOn,
     };
   }
 }

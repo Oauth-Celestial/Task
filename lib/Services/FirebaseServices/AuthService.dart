@@ -8,6 +8,7 @@ class AuthService {
   static FirebaseAuth auth = FirebaseAuth.instance;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  /// Sign  in with google
   static siginwithGoogle() async {
     try {
       GoogleSignInAccount? a = await GoogleSignIn().signIn();
@@ -25,6 +26,7 @@ class AuthService {
     }
   }
 
+  /// Logout user from both google and firebase
   static signout() async {
     await GoogleSignIn().signOut();
 

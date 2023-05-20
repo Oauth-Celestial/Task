@@ -2,18 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:taskmanagment/Controller/HomeScreenController.dart';
-import 'package:taskmanagment/Controller/TaskController.dart';
-import 'package:taskmanagment/Controller/AnimatedDrawerController.dart';
 import 'package:taskmanagment/CustomWidgets/AnimatedDrawer/AnimatedDrawer.dart';
 import 'package:taskmanagment/CustomWidgets/AnimatedDrawer/Drawer.dart';
-import 'package:taskmanagment/CustomWidgets/ResetAppState.dart';
 import 'package:taskmanagment/Helpers/AppProviders.dart';
 import 'package:taskmanagment/Screen/HomeScreen/HomeScreen.dart';
 import 'package:taskmanagment/Screen/Login.dart';
 import 'package:taskmanagment/Screen/NoInternet.dart';
 import 'package:taskmanagment/Services/NetworkService/NetworkCheck.dart';
 
+// abstract method to reset provider if necessary
 abstract class DisposableProvider with ChangeNotifier {
   void disposeValues();
 }
@@ -33,7 +30,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -47,11 +43,12 @@ class _MyAppState extends State<MyApp> {
 
                 return MaterialApp(
                   navigatorKey: NetworkCheck.contextKey,
-                  title: 'Flutter Demo',
+                  title: 'Tasks',
                   theme: ThemeData(
                     primarySwatch: Colors.blue,
                   ),
                   home: userData.hasData
+                      // Custom drawer for animation
                       ? AnimatedDrawer(
                           baseWidget: HomeScreen(),
                           drawerWiget: HomeDrawer(),
