@@ -36,7 +36,7 @@ class _ManipulateTaskState extends State<ManipulateTask> {
     // TODO: implement initState
     super.initState();
     titleController.text = widget.taskData.title ?? "";
-    descriptionController.text = widget.taskData.title ?? "";
+    descriptionController.text = widget.taskData.description ?? "";
 
     dateController.text =
         DateHelper.shared.stringFromTimeStamp(widget.taskData.endsOn!);
