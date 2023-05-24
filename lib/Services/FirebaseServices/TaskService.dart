@@ -78,12 +78,18 @@ class TaskService {
     List<SectionModel> sections = [];
     List<TaskModel> completed = [];
     List<TaskModel> inProgress = [];
+    List<TaskModel> businessTask = [];
+    List<TaskModel> personalTask = [];
     List<QueryDocumentSnapshot>? taskDocuments = taskData?.docs ?? [];
 
     for (DocumentSnapshot task in taskDocuments ?? []) {
       TaskModel userTask = TaskModel.fromJson(
           json: DocumentHelper.convertToJson(doc: task), taskId: task.id);
-
+      if (userTask.taskType?.toLowerCase() == "personal") {
+        personalTask.add(userTask);
+      } else {
+        businessTask.add(userTask);
+      }
       if (userTask.hasCompleted ?? false) {
         completed.add(userTask);
       } else {
@@ -102,7 +108,13 @@ class TaskService {
       percentage = completed.length / taskDocuments.length;
     }
 
-    return HomeDataModel(inProgress.length, completed.length, percentage * 100,
-        sections, taskDocuments.length);
+    return HomeDataModel(
+        inProgress.length,
+        completed.length,
+        percentage * 100,
+        sections,
+        taskDocuments.length,
+        personalTask.length,
+        businessTask.length);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanagment/Constants/AppColors.dart';
 import 'package:taskmanagment/Constants/HelperWidget.dart';
@@ -17,19 +18,17 @@ class TaskTile extends StatelessWidget {
           children: [
             HelperWidget.addVerticalSpace(of: 5),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 HelperWidget.addHorizontalSpace(of: 10),
                 Container(
                   alignment: Alignment.center,
                   width: 60,
                   height: 60,
-                  child: (task.hasCompleted ?? false)
-                      ? Icon(
-                          Icons.task_alt,
-                          color: AppColors.purpleBackground,
-                          size: 40,
-                        )
-                      : Text("${index}"),
+                  child: Container(
+                      width: 40,
+                      height: 40,
+                      child: Image.asset("Assets/icons/${task.taskType}.png")),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 0.5),
                       borderRadius: BorderRadius.circular(30)),
@@ -38,48 +37,52 @@ class TaskTile extends StatelessWidget {
                 Expanded(
                   flex: 4,
                   child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${task.title ?? "-"}",
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                              decoration: (task.hasCompleted ?? false)
-                                  ? TextDecoration.lineThrough
-                                  : null),
-                        ),
-                        HelperWidget.addVerticalSpace(of: 5),
-                        Container(
-                          child: Text(
-                            "${task.description ?? "-"}",
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${task.title ?? "-"}",
                             maxLines: 1,
                             style: TextStyle(
-                                color: AppColors.textColor,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 17,
                                 decoration: (task.hasCompleted ?? false)
                                     ? TextDecoration.lineThrough
                                     : null),
                           ),
-                        ),
-                        HelperWidget.addVerticalSpace(of: 5),
-                        if (!(task.hasCompleted ?? false)) ...[
+                          HelperWidget.addVerticalSpace(of: 5),
                           Container(
                             child: Text(
-                              "Task Ends on :- ${DateHelper.shared.stringFromTimeStamp(task.endsOn!)}",
-                              maxLines: 2,
-                              style:
-                                  TextStyle(color: AppColors.purpleBackground),
+                              "${task.description ?? "-"}",
+                              maxLines: 1,
+                              style: TextStyle(
+                                  color: AppColors.textColor,
+                                  decoration: (task.hasCompleted ?? false)
+                                      ? TextDecoration.lineThrough
+                                      : null),
                             ),
-                          )
-                        ]
-                      ],
+                          ),
+                          HelperWidget.addVerticalSpace(of: 5),
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 HelperWidget.addHorizontalSpace(of: 8),
+                Container(
+                  alignment: Alignment.topLeft,
+                  width: 55,
+                  height: 60,
+                  child: Text(
+                      "${DateHelper.shared.getAMorPm(task.endsOn ?? Timestamp.now())}"
+                          .toLowerCase(),
+                      style: TextStyle(
+                        color: AppColors.textColor,
+                      )),
+                )
               ],
             ),
             Expanded(

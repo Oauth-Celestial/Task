@@ -7,6 +7,8 @@ import 'package:taskmanagment/Constants/AssetPath.dart';
 import 'package:taskmanagment/Constants/HelperWidget.dart';
 
 import 'package:taskmanagment/Controller/AnimatedDrawerController.dart';
+import 'package:taskmanagment/Controller/ManipulateTaskController.dart';
+import 'package:taskmanagment/Controller/TaskController.dart';
 import 'package:taskmanagment/CustomWidgets/ResetAppState.dart';
 import 'package:taskmanagment/Services/FirebaseServices/AuthService.dart';
 
@@ -97,6 +99,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
                         child: Text("Logout"),
                         onPressed: () async {
                           Navigator.of(context).pop();
+                          Provider.of<TaskController>(context, listen: false)
+                              .clearData();
+                          Provider.of<ManipulateTaskController>(context,
+                                  listen: false)
+                              .clearData();
+
                           //RestartWidget.restartApp(context);
 
                           await AuthService.signout();

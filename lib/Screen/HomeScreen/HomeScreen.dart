@@ -43,11 +43,10 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.purpleBackground,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: OpenContainer(
           transitionType: ContainerTransitionType.fade,
-          transitionDuration: Duration(milliseconds: 600),
+          transitionDuration: Duration(milliseconds: 450),
           openBuilder: (context, _) => AddTask(),
           closedElevation: 0,
           closedShape: RoundedRectangleBorder(
@@ -85,17 +84,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           dateFormat: dateFormat,
                           data: taskData,
                         ),
-                        SizedBox(
-                          height: 30,
-                        ),
                         Expanded(
-                          child: Container(
-                              color: Colors.white,
-                              child: taskData.totalTask > 0
-                                  ? SectionListView(
-                                      sections: taskData.sectionData,
-                                    )
-                                  : notask()),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: Container(
+                                color: Colors.white,
+                                child: taskData.totalTask > 0
+                                    ? SectionListView(
+                                        sections: taskData.sectionData,
+                                      )
+                                    : notask()),
+                          ),
                         )
                       ],
                     );

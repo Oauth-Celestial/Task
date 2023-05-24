@@ -17,9 +17,15 @@ class DateHelper {
   }
 
   /// converts your timestamp to date which look like  may 20, 2023
-  String stringFromTimeStamp(Timestamp date) {
+  String stringFromTimeStamp(Timestamp time) {
     var stamp =
-        new DateTime.fromMillisecondsSinceEpoch(date.millisecondsSinceEpoch);
+        new DateTime.fromMillisecondsSinceEpoch(time.millisecondsSinceEpoch);
     return DateFormat.yMMMMd().format(stamp);
+  }
+
+  String getAMorPm(Timestamp time) {
+    var stamp =
+        new DateTime.fromMillisecondsSinceEpoch(time.millisecondsSinceEpoch);
+    return DateFormat('hh a').format(stamp);
   }
 }

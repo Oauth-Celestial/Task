@@ -5,7 +5,7 @@ import 'package:taskmanagment/Model/TaskModel.dart';
 import 'package:taskmanagment/Services/FirebaseServices/TaskService.dart';
 import 'package:taskmanagment/main.dart';
 
-class TaskController extends DisposableProvider {
+class ManipulateTaskController extends DisposableProvider {
   DateTime? userDate;
   List<String> taskType = [
     "Personal",
@@ -41,17 +41,18 @@ class TaskController extends DisposableProvider {
   Future<bool> updateTask(
       {required String title,
       required String description,
-      required String place,
-      required String taskType,
+      required String date,
       required String id}) async {
+    DateFormat format = DateFormat.yMMMMd('en_US');
+    DateTime enteredDate = format.parse(date);
     TaskModel task = TaskModel(
         title: title,
         description: description,
         createdOn: Timestamp.now(),
-        endsOn: Timestamp.fromDate(userDate ?? DateTime.now()),
+        endsOn: Timestamp.fromDate(enteredDate),
         hasCompleted: false,
-        taskType: taskType,
-        place: place);
+        taskType: '',
+        place: '');
 
     bool hasAddedTask = await TaskService.shared.updateTask(task, id);
     userDate = null;

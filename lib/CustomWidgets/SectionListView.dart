@@ -26,7 +26,7 @@ class SectionListView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    section.title,
+                    section.title.toUpperCase(),
                     style: TextStyle(
                         color: AppColors.textColor,
                         fontSize: 15,
@@ -61,7 +61,7 @@ class SectionListView extends StatelessWidget {
                         left: 10, right: 10, top: 5, bottom: 5),
                     child: OpenContainer(
                       transitionType: ContainerTransitionType.fade,
-                      transitionDuration: Duration(milliseconds: 600),
+                      transitionDuration: Duration(milliseconds: 450),
                       openBuilder: (context, _) => ManipulateTask(
                         taskData: section.sectionTask![index],
                       ),

@@ -1,17 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
 import 'package:taskmanagment/Constants/AppColors.dart';
 import 'package:taskmanagment/Constants/HelperWidget.dart';
+import 'package:taskmanagment/Controller/InputController.dart';
+import 'package:taskmanagment/Controller/ManipulateTaskController.dart';
 import 'package:taskmanagment/Controller/TaskController.dart';
 import 'package:taskmanagment/Helpers/DateHelper.dart';
+import 'package:taskmanagment/Helpers/FontHelper.dart';
 import 'package:taskmanagment/Model/TaskModel.dart';
 import 'package:taskmanagment/Services/FirebaseServices/TaskService.dart';
 
 class ManipulateTask extends StatefulWidget {
-  TaskModel taskData;
+  final TaskModel taskData;
   ManipulateTask({required this.taskData});
 
   @override
@@ -27,9 +29,13 @@ class _ManipulateTaskState extends State<ManipulateTask> {
 
   TextEditingController descriptionController = TextEditingController();
 
+  TextEditingController placeController = TextEditingController();
+
   FocusNode titleNode = FocusNode();
 
   FocusNode descriptionNode = FocusNode();
+
+  FocusNode placeNode = FocusNode();
 
   @override
   void initState() {
@@ -37,147 +43,250 @@ class _ManipulateTaskState extends State<ManipulateTask> {
     super.initState();
     titleController.text = widget.taskData.title ?? "";
     descriptionController.text = widget.taskData.description ?? "";
-
-    dateController.text =
-        DateHelper.shared.stringFromTimeStamp(widget.taskData.endsOn!);
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    titleController.dispose();
-    dateController.dispose();
-    descriptionController.dispose();
-    super.dispose();
+    placeController.text = widget.taskData.place ?? "";
+    dateController.text = DateHelper.shared
+        .stringFromTimeStamp(widget.taskData.endsOn ?? Timestamp.now());
+    Provider.of<ManipulateTaskController>(context, listen: false).selectedItem =
+        widget.taskData.taskType ?? "Personal";
+    Provider.of<ManipulateTaskController>(context, listen: false).userDate =
+        DateTime.fromMillisecondsSinceEpoch(
+            widget.taskData.endsOn?.millisecondsSinceEpoch ??
+                DateTime.now().millisecondsSinceEpoch);
+    ;
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isCompleted = (widget.taskData.hasCompleted ?? false);
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: AppColors.purpleBackground,
-        body: SafeArea(
-          child: Stack(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: AppColors.purpleBackground,
+          body: SafeArea(
+              child: Stack(
             children: [
-              Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      height: 50,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            child: Text(
-                              widget.taskData.hasCompleted!
-                                  ? "Completed"
-                                  : "Update",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Container(
-                                  child: Icon(
-                                    Icons.arrow_back,
-                                    color: AppColors.navigationButtonColor,
-                                  ),
-                                ),
+              SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: Column(
+                    children: [
+                      HelperWidget.addVerticalSpace(of: 10),
+                      Container(
+                        alignment: Alignment.center,
+                        width: double.infinity,
+                        height: 50,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                isCompleted ? "Completed" : " Update",
+                                style: FontHelper.shared.fieldInputStyle(),
                               ),
-                              Expanded(child: Container()),
-                              Visibility(
-                                visible: !widget.taskData.hasCompleted!,
-                                child: InkWell(
-                                  onTap: () async {
-                                    bool hasDeletedTask = await TaskService
-                                        .shared
-                                        .deleteTask(widget.taskData.taskId!);
-                                    if (hasDeletedTask) {
-                                      Navigator.of(context).pop();
-                                      HelperWidget.showToast("Deleted Task");
-                                    }
+                            ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Provider.of<ManipulateTaskController>(
+                                            context,
+                                            listen: false)
+                                        .clearData();
+                                    Navigator.of(context).pop();
                                   },
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: AppColors.navigationButtonColor,
+                                  child: Container(
+                                    child: Icon(
+                                      Icons.arrow_back,
+                                      color: AppColors.navigationButtonColor,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      child: (widget.taskData.hasCompleted ?? false)
-                          ? Icon(
-                              Icons.task_alt,
-                              size: 50,
-                              color: AppColors.background,
+                                Expanded(child: Container()),
+                                Visibility(
+                                  visible:
+                                      !(widget.taskData.hasCompleted ?? false),
+                                  child: InkWell(
+                                    onTap: () async {
+                                      bool hasDeleted = await TaskService.shared
+                                          .deleteTask(
+                                              widget.taskData.taskId ?? "");
+                                      if (hasDeleted) {
+                                        HelperWidget.showToast("Task Deleted");
+                                        Navigator.of(context).pop();
+                                      }
+                                    },
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: AppColors.navigationButtonColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             )
-                          : Icon(
-                              Icons.add_task,
-                              size: 50,
-                              color: AppColors.background,
-                            ),
-                    ),
-                    TextField(
-                      style: TextStyle(
-                          color: (widget.taskData.hasCompleted ?? false)
-                              ? AppColors.textColor
-                              : Colors.white,
-                          fontSize: 17),
-                      controller: titleController,
-                      readOnly: widget.taskData.hasCompleted ?? false,
-                      focusNode: titleNode,
-                      decoration: InputDecoration(
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                          ),
-                          labelText: 'Title',
-                          labelStyle: TextStyle(color: Colors.grey)),
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    SizedBox(
-                      height: 100,
-                      child: TextField(
-                        readOnly: widget.taskData.hasCompleted ?? false,
-                        style: TextStyle(
-                            color: (widget.taskData.hasCompleted ?? false)
-                                ? AppColors.textColor
-                                : Colors.white,
-                            fontSize: 17),
-                        focusNode: descriptionNode,
-                        controller: descriptionController,
-                        maxLines: null, // Set this
-                        expands: true, // and this
-                        keyboardType: TextInputType.multiline,
+                          ],
+                        ),
+                      ),
+                      HelperWidget.addVerticalSpace(of: 30),
+                      Consumer<ManipulateTaskController>(
+                          builder: (context, controller, snapshot) {
+                        return Container(
+                          width: 70,
+                          height: 70,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey, width: 1),
+                              borderRadius: BorderRadius.circular(45)),
+                          alignment: Alignment.center,
+                          child: Container(
+                              width: 45,
+                              height: 45,
+                              child: Image.asset(
+                                  "Assets/icons/${controller.selectedItem}.png")),
+                        );
+                      }),
+                      HelperWidget.addVerticalSpace(of: 40),
+                      Consumer<ManipulateTaskController>(
+                          builder: (context, controller, snapshot) {
+                        return DropdownButton(
+                          isExpanded: true,
+                          style: FontHelper.shared.fieldInputStyle(),
+                          value: controller.selectedItem,
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          dropdownColor: AppColors.purpleBackground,
+                          items: controller.taskType.map((String items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child: Text(items),
+                            );
+                          }).toList(),
+                          onChanged: isCompleted
+                              ? null
+                              : (String? newValue) {
+                                  controller.changeTask(newValue ?? "Personal");
+                                },
+                        );
+                      }),
+                      HelperWidget.addVerticalSpace(of: 10),
+                      Consumer<InputController>(
+                          builder: (context, controller, snapshot) {
+                        return TextField(
+                          readOnly: isCompleted,
+                          style: FontHelper.shared
+                              .fieldInputStyle(iscompleted: isCompleted),
+                          controller: titleController,
+                          focusNode: titleNode,
+                          onChanged: (value) {
+                            controller.hasChangedInput();
+                          },
+                          decoration: InputDecoration(
+                              suffixIcon: titleController.text.length > 0 &&
+                                      !isCompleted
+                                  ? IconButton(
+                                      onPressed: () {
+                                        titleController.clear();
+                                        controller.hasChangedInput();
+                                      },
+                                      icon: Icon(Icons.cancel),
+                                    )
+                                  : null,
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              hintText: "Title",
+                              hintStyle: TextStyle(color: Colors.grey),
+                              labelStyle: TextStyle(color: Colors.grey)),
+                        );
+                      }),
+                      HelperWidget.addVerticalSpace(of: 25),
+                      Consumer<InputController>(
+                          builder: (context, controller, snapshot) {
+                        return TextField(
+                          readOnly: isCompleted,
+                          onChanged: (v) {
+                            controller.hasChangedInput();
+                          },
+                          style: FontHelper.shared
+                              .fieldInputStyle(iscompleted: isCompleted),
+                          focusNode: descriptionNode,
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                              suffixIcon:
+                                  descriptionController.text.length > 0 &&
+                                          !isCompleted
+                                      ? IconButton(
+                                          onPressed: () {
+                                            descriptionController.clear();
+                                            controller.hasChangedInput();
+                                          },
+                                          icon: Icon(Icons.cancel),
+                                        )
+                                      : null,
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              hintText: 'Description',
+                              hintStyle: TextStyle(color: Colors.grey)),
+                        );
+                      }),
+                      HelperWidget.addVerticalSpace(of: 10),
+                      Consumer<InputController>(
+                          builder: (context, controller, snapshot) {
+                        return TextField(
+                          readOnly: isCompleted,
+                          onChanged: (_) {
+                            controller.hasChangedInput();
+                          },
+                          style: FontHelper.shared
+                              .fieldInputStyle(iscompleted: isCompleted),
+                          focusNode: placeNode,
+                          controller: placeController,
+                          decoration: InputDecoration(
+                              suffixIcon: placeController.text.length > 0 &&
+                                      !isCompleted
+                                  ? IconButton(
+                                      onPressed: () {
+                                        placeController.clear();
+                                        controller.hasChangedInput();
+                                      },
+                                      icon: Icon(Icons.cancel),
+                                    )
+                                  : null,
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              hintText: 'Place',
+                              hintStyle: TextStyle(color: Colors.grey)),
+                        );
+                      }),
+                      HelperWidget.addVerticalSpace(of: 10),
+                      TextField(
+                        readOnly: isCompleted,
+                        style: FontHelper.shared
+                            .fieldInputStyle(iscompleted: isCompleted),
+                        focusNode: AlwaysDisabledFocusNode(),
+                        controller: dateController,
+                        onTap: isCompleted
+                            ? null
+                            : () async {
+                                DateTime? date =
+                                    await Provider.of<TaskController>(context,
+                                            listen: false)
+                                        .showDateTimePicker(context: context);
+                                dateController.text = DateHelper.shared
+                                    .datetoString(date ?? DateTime.now());
+                              },
                         decoration: InputDecoration(
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.grey),
@@ -185,60 +294,18 @@ class _ManipulateTaskState extends State<ManipulateTask> {
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.grey),
                             ),
-                            labelText: 'Description',
+                            labelText: 'Time',
                             labelStyle: TextStyle(color: Colors.grey)),
                       ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    TextField(
-                      readOnly: widget.taskData.hasCompleted!,
-                      style: TextStyle(
-                          color: (widget.taskData.hasCompleted ?? false)
-                              ? AppColors.textColor
-                              : Colors.white,
-                          fontSize: 17),
-                      focusNode: AlwaysDisabledFocusNode(),
-                      controller: dateController,
-                      onTap: widget.taskData.hasCompleted!
-                          ? null
-                          : () {
-                              Provider.of<TaskController>(context,
-                                      listen: false)
-                                  .showDateDialogue(context, dateController);
-                            },
-                      decoration: InputDecoration(
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
-                          ),
-                          labelText: 'Date',
-                          labelStyle: TextStyle(color: Colors.grey)),
-                    ),
-                    Visibility(
-                        visible: widget.taskData.hasCompleted!,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 50),
-                          child: Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              " Task Completed On : - ${DateHelper.shared.stringFromTimeStamp(widget.taskData.completedOn ?? Timestamp.now())}",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        )),
-                    SizedBox(
-                      height: 80,
-                    ),
-                    Expanded(
-                      child: Visibility(
-                        visible: !widget.taskData.hasCompleted!,
+                      HelperWidget.addVerticalSpace(of: 35),
+                      if (isCompleted) ...[
+                        Text(
+                          "Task Completed on :- ${DateHelper.shared.stringFromTimeStamp(widget.taskData.completedOn ?? Timestamp.now())}",
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
+                      Visibility(
+                        visible: !(widget.taskData.hasCompleted ?? false),
                         child: Container(
                           alignment: Alignment.topCenter,
                           child: InkWell(
@@ -253,19 +320,33 @@ class _ManipulateTaskState extends State<ManipulateTask> {
                                 return;
                               }
 
-                              if (dateController.text == "") {
-                                Provider.of<TaskController>(context,
-                                        listen: false)
-                                    .showDateDialogue(context, dateController);
+                              if (placeController.text == "") {
+                                placeNode.requestFocus();
                                 return;
                               }
+
+                              if (dateController.text == "") {
+                                DateTime? date =
+                                    await Provider.of<TaskController>(context,
+                                            listen: false)
+                                        .showDateTimePicker(context: context);
+                                dateController.text = DateHelper.shared
+                                    .datetoString(date ?? DateTime.now());
+                                return;
+                              }
+
                               bool hasAdded = await Provider.of<TaskController>(
                                       context,
                                       listen: false)
                                   .updateTask(
                                       title: titleController.text,
                                       description: descriptionController.text,
-                                      date: dateController.text,
+                                      place: placeController.text,
+                                      taskType:
+                                          Provider.of<ManipulateTaskController>(
+                                                  context,
+                                                  listen: false)
+                                              .selectedItem,
                                       id: widget.taskData.taskId ?? "");
                               if (hasAdded) {
                                 Navigator.of(context).pop();
@@ -288,53 +369,51 @@ class _ManipulateTaskState extends State<ManipulateTask> {
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    )
-                  ],
+                      SizedBox(
+                        height: 40,
+                      )
+                    ],
+                  ),
                 ),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   width: double.infinity,
-                  color: AppColors.drawerBackground,
                   height: 50,
-                  child: InkWell(
-                    onTap: () async {
-                      bool hasUpdated = await TaskService.shared
-                          .updateTaskStatus(widget.taskData.taskId ?? "",
-                              !(widget.taskData.hasCompleted ?? false));
-                      Navigator.of(context).pop();
-                      HelperWidget.showToast("Status Updated");
-                    },
-                    child: Container(
-                      alignment: Alignment.centerRight,
+                  color: Colors.deepPurple.shade400,
+                  child:
+                      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    InkWell(
+                      onTap: () async {
+                        bool hasUpdatedTask = await TaskService.shared
+                            .updateTaskStatus(widget.taskData.taskId ?? "",
+                                !(widget.taskData.hasCompleted ?? false));
+
+                        if (hasUpdatedTask) {
+                          HelperWidget.showToast("Task Status Updated");
+                          Navigator.of(context).pop();
+                        }
+                      },
                       child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              child: Text(
-                                widget.taskData.hasCompleted ?? false
-                                    ? "Mark As Incomplete"
-                                    : "Mark as Completed",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            HelperWidget.addHorizontalSpace(of: 20),
-                          ],
+                        alignment: Alignment.center,
+                        height: 50,
+                        child: Text(
+                          (widget.taskData.hasCompleted ?? false)
+                              ? "Mark has Incomplete"
+                              : "Mark has complete",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    HelperWidget.addHorizontalSpace(of: 10),
+                  ]),
                 ),
               )
             ],
-          ),
-        ),
-      ),
+          ))),
     );
   }
 }
